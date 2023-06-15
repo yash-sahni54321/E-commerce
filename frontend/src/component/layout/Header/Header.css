@@ -1,0 +1,38 @@
+.speedDial {
+  position: fixed;
+  right: 3vmax;
+  top: 6vmax;
+}
+
+.speedDialIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 100%;
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 480px) {
+  .speedDial {
+    position: fixed;
+    right: 3vmax;
+    top: 12vmax;
+  }
+}
+
+/* Media Query for low resolution  Tablets, Ipads */
+@media (min-width: 481px) and (max-width: 767px) {
+  .speedDial {
+    position: fixed;
+    right: 3vmax;
+    top: 10vmax;
+  }
+}
+
+/* Media Query for Tablets Ipads portrait mode */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .speedDial {
+    position: fixed;
+    right: 3vmax;
+    top: 10vmax;
+  }
+}
