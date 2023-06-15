@@ -8,7 +8,7 @@ import {
   PRODUCT_DETAILS_SUCCESS,
 } from "../constants/productConstant";
 
-export const productReducer = (state = { products: [] }, action) => {
+export const productsReducer = (state = { products: [] }, action) => {
   switch (action.type) {
     case ALL_PRODUCT_REQUEST:
       return {
@@ -20,13 +20,12 @@ export const productReducer = (state = { products: [] }, action) => {
         loading: false,
         products: action.payload.products,
         productsCount: action.payload.productsCount,
+        resultPerPage: action.payload.resultPerPage,
+        filteredProductsCount: action.payload.filteredProductsCount,
       };
 
     case ALL_PRODUCT_FAIL:
-      return {
-        loading: false,
-        error: action.payload,
-      };
+
     case CLEAR_ERRORS:
       return {
         ...state,
@@ -45,7 +44,6 @@ export const productDetailsReducer = (state = { product: {} }, action) => {
         ...state,
       };
     case PRODUCT_DETAILS_SUCCESS:
- 
       return {
         loading: false,
         product: action.payload,

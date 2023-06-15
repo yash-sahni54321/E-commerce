@@ -4,7 +4,7 @@ import "./ProductDetails.css";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ReviewCard from "./ReviewCard.js";
-import { getProductDetails } from "../../actions/productActions";
+import { clearErrors, getProductDetails } from "../../actions/productActions";
 import { Rating } from "@material-ui/lab";
 const ProductDetails = ({ props }) => {
   const dispatch = useDispatch();
@@ -13,6 +13,10 @@ const ProductDetails = ({ props }) => {
   );
   const { id } = useParams();
   useEffect(() => {
+    if (error) {
+      window.alert("Error");
+      dispatch(clearErrors());
+    }
     dispatch(getProductDetails(id));
   }, [dispatch, id]);
 
@@ -21,30 +25,6 @@ const ProductDetails = ({ props }) => {
     value: product.ratings,
     readOnly: true,
     precision: 0.5,
-  };
-
-  const [quantity, setQuantity] = useState(1);
-  const [open, setOpen] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
-
-  const increaseQuantity = () => {
-    if (product.Stock <= quantity) return;
-
-    const qty = quantity + 1;
-    setQuantity(qty);
-  };
-
-  const decreaseQuantity = () => {
-    if (1 >= quantity) return;
-
-    const qty = quantity - 1;
-    setQuantity(qty);
-  };
-
-  const addToCartHandler = () => {
-    // dispatch(addItemsToCart(id, quantity));
-    // alert.success("Item Added To Cart");
   };
 
   return (
@@ -83,14 +63,11 @@ const ProductDetails = ({ props }) => {
                 <h1>{`₹${product.price}`}</h1>
                 <div className="detailsBlock-3-1">
                   <div className="detailsBlock-3-1-1">
-                    <button onClick={decreaseQuantity}>-</button>
-                    <input readOnly type="number" value={quantity} />
-                    <button onClick={increaseQuantity}>+</button>
+                    <button>-</button>
+                    <input readOnly type="number" />
+                    <button>+</button>
                   </div>
-                  <button
-                    disabled={product.Stock < 1 ? true : false}
-                    onClick={addToCartHandler}
-                  >
+                  <button disabled={product.Stock < 1 ? true : false}>
                     Add to Cart
                   </button>
                 </div>
@@ -107,9 +84,7 @@ const ProductDetails = ({ props }) => {
                 Description : <p>{product.description}</p>
               </div>
 
-              {/* <button onClick={submitReviewToggle} className="submitReview">
-                Submit Review
-              </button> */}
+              <button className="submitReview">Submit Review</button>
             </div>
           </div>
           <h3 className="reviewsHeading">REVIEWS</h3>
