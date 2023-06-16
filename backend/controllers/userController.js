@@ -3,8 +3,15 @@ const ErrorHandler = require("../utils/errorhandler");
 const User = require("../models/usermodel");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail.");
+const cloudinary = require("cloudinary");
 
 exports.registerUser = catchAsyncError(async (req, res, next) => {
+  const mycloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+    folder: "avatars",
+    width: 150,
+    crop: "scale",
+  });
+
   const { name, email, password } = req.body;
 
   const user = await User.create({
@@ -12,8 +19,8 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
     email,
     password,
     avatar: {
-      public_id: "The sample id",
-      url: "profilepicUrl",
+      public_id: mycloud.public_id,
+      url: mycloud.secure_url,
     },
   });
 
@@ -161,12 +168,31 @@ exports.updatePassword = catchAsyncError(async (req, res, next) => {
   sendToken(user, 200, res);
 });
 
-//Update profile
+// update User Profile
 exports.updateProfile = catchAsyncError(async (req, res, next) => {
   const newUserData = {
     name: req.body.name,
     email: req.body.email,
   };
+
+  if (req.body.avatar !== "") {
+    const user = await User.findById(req.user.id);
+
+    const imageId = user.avatar.public_id;
+
+    await cloudinary.v2.uploader.destroy(imageId);
+
+    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+      folder: "avatars",
+      width: 150,
+      crop: "scale",
+    });
+
+    newUserData.avatar = {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    };
+  }
 
   const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
     new: true,
@@ -174,9 +200,10 @@ exports.updateProfile = catchAsyncError(async (req, res, next) => {
     useFindAndModify: false,
   });
 
-  res.status(200).json({ success: true });
+  res.status(200).json({
+    success: true,
+  });
 });
-
 //Get all Users -- Admin
 exports.getAllUser = catchAsyncError(async (req, res, next) => {
   const user = await User.find();
