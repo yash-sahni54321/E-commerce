@@ -9,7 +9,6 @@ import Loader from "./component/layout/Loader/Loader";
 import ProductDetails from "./component/Product/ProductDetails.js";
 import Products from "./component/Product/Products.js";
 import Search from "./component/Product/Search";
-import LoginsignUp from "./component/User/LoginSignUp.js";
 import LoginSignUp from "./component/User/LoginSignUp.js";
 import store from "./Store";
 import { loadUser } from "./actions/userAction";
@@ -18,6 +17,11 @@ import UserOptions from "./component/layout/Header/UserOptions.js";
 import ProtectedRoute from "./component/Route/ProtectedRoute";
 import Profile from "./component/User/Profile.js";
 import UpdateProfile from "./component/User/UpdateProfile.js";
+import ResetPassword from "./component/User/UpdatePassword.js";
+import UpdatePassword from "./component/User/UpdatePassword.js";
+import Cart from "./component/Cart/Cart";
+import Shipping from "./component/Cart/Shipping.js";
+import ConfirmOrders from "./component/Cart/ConfirmOrders.js";
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -56,11 +60,23 @@ function App() {
               <Route path="/products/:keyword">
                 <Products />
               </Route>
+              <Route path="/cart">
+                <Cart />
+              </Route>
               <ProtectedRoute exact path="/account">
                 <Profile />
               </ProtectedRoute>
               <ProtectedRoute exact path="/me/update">
                 <UpdateProfile />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/password/update">
+                <UpdatePassword />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/shipping">
+                <Shipping />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/order/confirm">
+                <ConfirmOrders />
               </ProtectedRoute>
             </div>
           </div>
