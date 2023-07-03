@@ -1,13 +1,19 @@
 .speedDial {
   position: fixed;
+  opacity: 0.5;
   right: 3vmax;
   top: 6vmax;
+
 }
+
 
 .speedDialIcon {
   width: 56px;
   height: 56px;
   border-radius: 100%;
+}
+.speedDial:hover {
+opacity: 1;
 }
 
 /* Media Query for Mobile Devices */

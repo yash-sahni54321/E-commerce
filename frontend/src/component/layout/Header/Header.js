@@ -81,7 +81,7 @@ function NavBar() {
               </NavLink>
               <NavLink
                 exact
-                to="/#"
+                to="/cart"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}

@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, login, register } from "../../actions/userAction.js";
 import { useAlert } from "react-alert";
 import { useLocation, useHistory } from "react-router-dom";
-
 const LoginSignUp = () => {
   let history = useHistory();
   let location = useLocation();

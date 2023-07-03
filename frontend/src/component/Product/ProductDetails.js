@@ -5,16 +5,39 @@ import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ReviewCard from "./ReviewCard.js";
 import { clearErrors, getProductDetails } from "../../actions/productActions";
+import { addItemsToCart } from "../../actions/cartAction";
+
 import { Rating } from "@material-ui/lab";
+
 const ProductDetails = ({ props }) => {
   const dispatch = useDispatch();
   const { product, loading, error } = useSelector(
     (state) => state.productDetails
   );
+
   const { id } = useParams();
+  const [quantity, setQuantity] = useState(1);
+
+  const increseQuantity = () => {
+    if (quantity >= product.Stock) {
+      return;
+    }
+    let qty = quantity + 1;
+    setQuantity(qty);
+  };
+
+  const decreseQuantity = () => {
+    if (quantity <= 1) {
+      return;
+    }
+    setQuantity(quantity - 1);
+  };
+
+  const addToCartHandler = () => {
+    dispatch(addItemsToCart(id, quantity));
+  };
   useEffect(() => {
     if (error) {
-      window.alert("Error");
       dispatch(clearErrors());
     }
     dispatch(getProductDetails(id));
@@ -63,11 +86,14 @@ const ProductDetails = ({ props }) => {
                 <h1>{`₹${product.price}`}</h1>
                 <div className="detailsBlock-3-1">
                   <div className="detailsBlock-3-1-1">
-                    <button>-</button>
-                    <input readOnly type="number" />
-                    <button>+</button>
+                    <button onClick={decreseQuantity}>-</button>
+                    <input readOnly type="number" value={quantity} />
+                    <button onClick={increseQuantity}>+</button>
                   </div>
-                  <button disabled={product.Stock < 1 ? true : false}>
+                  <button
+                    onClick={addToCartHandler}
+                    disabled={product.Stock < 1 ? true : false}
+                  >
                     Add to Cart
                   </button>
                 </div>
@@ -118,7 +144,7 @@ const ProductDetails = ({ props }) => {
                 Submit
               </Button>
             </DialogActions>
-          </Dialog> */}
+          </Dialog>
 
           {product.reviews && product.reviews[0] ? (
             <div className="reviews">
@@ -129,7 +155,7 @@ const ProductDetails = ({ props }) => {
             </div>
           ) : (
             <p className="noReviews">No Reviews Yet</p>
-          )}
+          )} */}
         </Fragment>
       )}
     </Fragment>
