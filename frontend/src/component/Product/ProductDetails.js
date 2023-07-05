@@ -1,47 +1,40 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
 import "./ProductDetails.css";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import {
+  getProductDetails,
+  clearErrors,
+  newReview,
+} from "../../actions/productActions";
 import ReviewCard from "./ReviewCard.js";
-import { clearErrors, getProductDetails } from "../../actions/productActions";
+import Loader from "../layout/Loader/Loader";
+import { useAlert } from "react-alert";
+import MetaData from "../layout/MetaData";
 import { addItemsToCart } from "../../actions/cartAction";
-
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
+import { NEW_REVIEW_RESET } from "../../constants/productConstant";
 
-const ProductDetails = ({ props }) => {
+const ProductDetails = () => {
+  const params = useParams();
   const dispatch = useDispatch();
+  const alert = useAlert();
+
   const { product, loading, error } = useSelector(
     (state) => state.productDetails
   );
 
-  const { id } = useParams();
-  const [quantity, setQuantity] = useState(1);
-
-  const increseQuantity = () => {
-    if (quantity >= product.Stock) {
-      return;
-    }
-    let qty = quantity + 1;
-    setQuantity(qty);
-  };
-
-  const decreseQuantity = () => {
-    if (quantity <= 1) {
-      return;
-    }
-    setQuantity(quantity - 1);
-  };
-
-  const addToCartHandler = () => {
-    dispatch(addItemsToCart(id, quantity));
-  };
-  useEffect(() => {
-    if (error) {
-      dispatch(clearErrors());
-    }
-    dispatch(getProductDetails(id));
-  }, [dispatch, id]);
+  const { success, error: reviewError } = useSelector(
+    (state) => state.newReview
+  );
 
   const options = {
     size: "large",
@@ -50,21 +43,81 @@ const ProductDetails = ({ props }) => {
     precision: 0.5,
   };
 
+  const [quantity, setQuantity] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+
+  const increaseQuantity = () => {
+    if (product.Stock <= quantity) return;
+
+    const qty = quantity + 1;
+    setQuantity(qty);
+  };
+
+  const decreaseQuantity = () => {
+    if (1 >= quantity) return;
+
+    const qty = quantity - 1;
+    setQuantity(qty);
+  };
+
+  const addToCartHandler = () => {
+    dispatch(addItemsToCart(params.id, quantity));
+    alert.success("Item Added To Cart");
+  };
+
+  const submitReviewToggle = () => {
+    open ? setOpen(false) : setOpen(true);
+  };
+
+  const reviewSubmitHandler = () => {
+    const myForm = new FormData();
+
+    myForm.set("rating", rating);
+    myForm.set("comment", comment);
+    myForm.set("productId", params.id);
+
+    dispatch(newReview(myForm));
+
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (error) {
+      alert.error(error);
+      dispatch(clearErrors());
+    }
+
+    if (reviewError) {
+      alert.error(reviewError);
+      dispatch(clearErrors());
+    }
+
+    if (success) {
+      alert.success("Review Submitted Successfully");
+      dispatch({ type: NEW_REVIEW_RESET });
+    }
+    dispatch(getProductDetails(params.id));
+  }, [dispatch, params.id, error, alert, reviewError, success]);
+
   return (
     <Fragment>
       {loading ? (
-        "loading"
+        <Loader />
       ) : (
         <Fragment>
+          <MetaData title={`${product.name} -- ECOMMERCE`} />
           <div className="ProductDetails">
             <div>
               <Carousel>
                 {product.images &&
-                  product.images?.map((item, i) => (
+                  product.images.map((item, i) => (
                     <img
                       className="CarouselImage"
-                      key={item.url}
+                      key={i}
                       src={item.url}
+                      alt={`${i} Slide`}
                     />
                   ))}
               </Carousel>
@@ -86,13 +139,13 @@ const ProductDetails = ({ props }) => {
                 <h1>{`₹${product.price}`}</h1>
                 <div className="detailsBlock-3-1">
                   <div className="detailsBlock-3-1-1">
-                    <button onClick={decreseQuantity}>-</button>
+                    <button onClick={decreaseQuantity}>-</button>
                     <input readOnly type="number" value={quantity} />
-                    <button onClick={increseQuantity}>+</button>
+                    <button onClick={increaseQuantity}>+</button>
                   </div>
                   <button
-                    onClick={addToCartHandler}
                     disabled={product.Stock < 1 ? true : false}
+                    onClick={addToCartHandler}
                   >
                     Add to Cart
                   </button>
@@ -110,12 +163,15 @@ const ProductDetails = ({ props }) => {
                 Description : <p>{product.description}</p>
               </div>
 
-              <button className="submitReview">Submit Review</button>
+              <button onClick={submitReviewToggle} className="submitReview">
+                Submit Review
+              </button>
             </div>
           </div>
+
           <h3 className="reviewsHeading">REVIEWS</h3>
 
-          {/* <Dialog
+          <Dialog
             aria-labelledby="simple-dialog-title"
             open={open}
             onClose={submitReviewToggle}
@@ -155,7 +211,7 @@ const ProductDetails = ({ props }) => {
             </div>
           ) : (
             <p className="noReviews">No Reviews Yet</p>
-          )} */}
+          )}
         </Fragment>
       )}
     </Fragment>

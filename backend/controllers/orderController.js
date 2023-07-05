@@ -50,17 +50,17 @@ exports.getSingleOrder = catchAsyncError(async (req, res, next) => {
   });
 });
 
-//Get logged in user Orders
+// get logged in user  Orders
 exports.myOrders = catchAsyncError(async (req, res, next) => {
-  const order = await Order.find({ user: req.user._id });
+  const orders = await Order.find({ user: req.user._id });
 
   res.status(200).json({
     success: true,
-    order,
+    orders,
   });
 });
 
-//Get All Orders -- Admin
+// get all Orders -- Admin
 exports.getAllOrders = catchAsyncError(async (req, res, next) => {
   const orders = await Order.find();
 
@@ -69,6 +69,7 @@ exports.getAllOrders = catchAsyncError(async (req, res, next) => {
   orders.forEach((order) => {
     totalAmount += order.totalPrice;
   });
+
   res.status(200).json({
     success: true,
     totalAmount,
