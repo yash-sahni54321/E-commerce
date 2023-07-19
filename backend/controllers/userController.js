@@ -206,11 +206,11 @@ exports.updateProfile = catchAsyncError(async (req, res, next) => {
 });
 //Get all Users -- Admin
 exports.getAllUser = catchAsyncError(async (req, res, next) => {
-  const user = await User.find();
+  const users = await User.find();
 
   res.status(200).json({
     success: true,
-    user,
+    users,
   });
 });
 
@@ -231,7 +231,7 @@ exports.getSingleUser = catchAsyncError(async (req, res, next) => {
   });
 });
 
-//Update user role --Admin
+// update User Role -- Admin
 exports.updateUserRole = catchAsyncError(async (req, res, next) => {
   const newUserData = {
     name: req.body.name,
@@ -239,13 +239,15 @@ exports.updateUserRole = catchAsyncError(async (req, res, next) => {
     role: req.body.role,
   };
 
-  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+  await User.findByIdAndUpdate(req.params.id, newUserData, {
     new: true,
     runValidators: true,
     useFindAndModify: false,
   });
 
-  res.status(200).json({ success: true });
+  res.status(200).json({
+    success: true,
+  });
 });
 
 //Delete user --Admin
@@ -258,7 +260,11 @@ exports.deleteUser = catchAsyncError(async (req, res, next) => {
     );
   }
 
+  const imageId = user.avatar.public_id;
+
+  await cloudinary.v2.uploader.destroy(imageId);
+
   await user.deleteOne();
 
-  res.status(200).json({ success: true });
+  res.status(200).json({ success: true, message: "User Deleted Successfully" });
 });

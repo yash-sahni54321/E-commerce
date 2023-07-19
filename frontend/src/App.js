@@ -1,6 +1,12 @@
 import "./App.css";
 import Header from "./component/layout/Header/Header";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Navigate,
+  Link,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import WebFont from "webfontloader";
 import Footer from "./component/layout/Footer/Footer";
@@ -25,13 +31,24 @@ import ConfirmOrders from "./component/Cart/ConfirmOrders.js";
 import Payment from "./component/Cart/Payment.js";
 import OrderSuccess from "./component/Cart/OrderSuccess.js";
 import MyOrders from "./component/Order/MyOrders.js";
-import { Elements } from "@stripe/react-stripe-js";
 import OrderDetails from "./component/Order/OrderDetails.js";
+import Dashboard from "./component/admin/Dashboard";
+import ProductList from "./component/admin/ProductList.js";
+import { Elements } from "@stripe/react-stripe-js";
+import NewProduct from "./component/admin/NewProduct.js";
+import UpdateProduct from "./component/admin/UpdateProduct.js";
 import { loadStripe } from "@stripe/stripe-js";
+import PageNotFound from "./component/layout/PageNotFound.js";
 import axios from "axios";
-
+import OrderList from "./component/admin/OrderList.js";
+import ProcessOrder from "./component/admin/ProcessOrder.js";
+import UserList from "./component/admin/UserList.js";
+import UserUpdate from "./component/admin/UserUpdate.js";
+import ProductReviews from "./component/admin/ProductReviews.js";
+import Contact from "./component/layout/Contact/Contact.js";
+import About from "./component/layout/About/About.js";
 function App() {
-  const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { isAuthenticated, user } = useSelector((state) => state.user || {});
 
   const [stripeApiKey, setStripeApiKey] = useState("");
 
@@ -46,7 +63,9 @@ function App() {
         families: ["Roboto", "Droid Sans", "Chilanka"],
       },
     });
+
     store.dispatch(loadUser());
+
     getStripeApiKey();
   }, []);
 
@@ -91,7 +110,7 @@ function App() {
               <ProtectedRoute exact path="/shipping">
                 <Shipping />
               </ProtectedRoute>
-              <ProtectedRoute exact path="/order/confirm">
+              <ProtectedRoute exact path="/orders/confirm">
                 <ConfirmOrders />
               </ProtectedRoute>
               {stripeApiKey && (
@@ -110,6 +129,45 @@ function App() {
               <ProtectedRoute exact path="/order/:id">
                 <OrderDetails />
               </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/dashboard">
+                <Dashboard />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/products">
+                <ProductList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/product">
+                <NewProduct />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/product/:id">
+                <UpdateProduct />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/orders">
+                <OrderList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/order/:id">
+                <ProcessOrder />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/users">
+                <UserList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/user/:id">
+                <UserUpdate />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/admin/reviews">
+                <ProductReviews />
+              </ProtectedRoute>
+              <Route path="/contact">
+                <Contact />
+              </Route>
+              <Route path="/about">
+                <About />
+              </Route>
+              <Route path="/404">
+                <PageNotFound />
+              </Route>
+              <Route path="*">
+                <Link to="/"></Link>
+              </Route>
             </div>
           </div>
           <Footer />

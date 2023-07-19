@@ -10,7 +10,6 @@ import { useAlert } from "react-alert";
 import Typography from "@material-ui/core/Typography";
 import MetaData from "../layout/MetaData";
 import { useParams } from "react-router-dom";
-
 const categories = [
   "Laptop",
   "Footwear",
@@ -19,15 +18,16 @@ const categories = [
   "Attire",
   "Camera",
   "SmartPhones",
+  "Watch",
 ];
 
 const Products = () => {
   const dispatch = useDispatch();
-
+  const params = useParams();
   const alert = useAlert();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [price, setPrice] = useState([0, 50000]);
+  const [price, setPrice] = useState([0, 100000]);
   const [category, setCategory] = useState("");
 
   const [ratings, setRatings] = useState(0);
@@ -40,7 +40,7 @@ const Products = () => {
     resultPerPage,
     filteredProductsCount,
   } = useSelector((state) => state.products);
-  let params = useParams;
+
   const keyword = params.keyword;
 
   const setCurrentPageNo = (e) => {
@@ -85,7 +85,7 @@ const Products = () => {
               valueLabelDisplay="auto"
               aria-labelledby="range-slider"
               min={0}
-              max={50000}
+              max={100000}
             />
 
             <Typography>Categories</Typography>

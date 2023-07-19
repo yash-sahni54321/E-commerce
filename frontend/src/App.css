@@ -2,4 +2,11 @@
     margin: 0;
 
     scroll-behavior: smooth;
+    
 }
+.redColor {
+    color: red
+  }
+  .greenColor{
+    color: green
+  }
