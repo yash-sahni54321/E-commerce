@@ -52,6 +52,9 @@ The project is an E-commerce web application that allows users to browse product
   - `/api/admin/products/create` - Create a new product (Admin)
   - `/api/admin/products/:id/update` - Update a product (Admin)
   - `/api/admin/products/:id/delete` - Delete a product (Admin)
+ 
+![EcommercePostman](https://github.com/yash-sahni54321/E-commerce/assets/67969545/76569f61-e14a-4c42-841e-a853118daa68)
+
 
 ## Installation
 
